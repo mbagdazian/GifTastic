@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Giftastic</title>
+</head>
+<body>
+
+
+<!--create three divs. One for Buttons. One for input field. One for gifs-->
+
+		<div id = 'buttons'>
+
+			<div id = 'buttonsSection'></div>
+
+		</div>
+
+	<!--gif field-->
+		<div id = 'create'>
+			<div>
+
+			<div>
+			Create your own button! <br> 
+			<input type = 'text' id=inputField><br>
+			<button id='submit'>Create Button
+			</button>
+			</div>
+			
+			</div>
+		</div>
+
+		<!--gif field-->
+		<div id = 'gifsGoHere'>
+			
+			<div id = "gifField"></div>
+		
+		</div>
+
+
+
+
+
+
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+//create buttons  
+	var comedians = ["Steve Carrell","Lucille Ball","Jim Gaffigan","FOTC","Kriten Wiig","Bill Hader","Carrie Brownstein","Bob Hope", "Bill Murray", "Steve Martin"];
+	
+	function loadbuttons(){
+	
+		$('#buttonsSection').empty();
+
+		for (var i = 0; i< comedians.length; i++){
+			
+			var a = $("<button>");
+			
+			a.addClass("gif");
+			
+			a.attr("data-name", comedians[i]);
+			
+			a.text(comedians[i]);
+			
+			$('#buttonsSection').append(a);
+		}};
+		
+
+
+
+	$(document.body).on("click", ".gif", function displayGif(){
+      var gif = $(this).attr("data-name");
+      console.log(gif);
+      var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
+        gif + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        .done(function(response) {
+        	$("#gifsGoHere").empty();
+          var results = response.data;
+
+          for (var j = 0; j < results.length; j++) {
+            var gifDiv = $("<div class='item'>");
+
+            var rating = results[j].rating;
+
+            var p = $("<p>").text("Rating: " + rating);
+            gifDiv.append(p);
+
+            var gifGenerated = $("<img>");
+            gifGenerated.attr("src", results[j].images.fixed_height.url);
+
+   			gifDiv.append(gifGenerated);
+
+            $("#gifsGoHere").prepend(gifDiv);
+
+          }
+        });
+
+});
+    
+
+
+
+//function to display ten gifs from the button with rating displayed.
+
+$('#submit').on("click", function(){
+	var newBTN = $("#inputField").val().trim();
+	console.log(newBTN);
+	comedians.push(newBTN);
+	console.log("click");
+	loadbuttons();
+}) 
+
+
+//make the gifs pause on load, play on click
+
+loadbuttons();
+
+
+</script>
+</body>
+</html>
